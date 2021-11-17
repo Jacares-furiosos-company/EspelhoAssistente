@@ -1,7 +1,8 @@
 from gtts import gTTS
 import speech_recognition as sr
 from subprocess import call     # MAC / LINUX
-#from playsound import playsound
+from playsound import playsound
+import time
 from requests import get
 from bs4 import BeautifulSoup
 import webbrowser as browser
@@ -16,30 +17,9 @@ with open('mirror-3663d-7396063fa192.json') as credenciais_google:
 
 ##### FUNÇÕES PRINCIPAIS #####
 
-def monitora_audio():
-    microfone = sr.Recognizer()
-    with sr.Microphone() as source:
-        while True:
-            print("Aguardando o Comando: ")
-            audio = microfone.listen(source)
-            try:
-                trigger = microfone.recognize_google_cloud(audio, credentials_json=credenciais_google, language='pt-BR')
-                trigger = trigger.lower()
-                if hotword in trigger:
-                    print('COMANDO: ', trigger)
-                    responde('feedback')
-                    executa_comandos(trigger)
-                    break
-
-            except sr.UnknownValueError:
-                print("Google not understand audio")
-            except sr.RequestError as e:
-                print("Could not request results from Google Cloud Speech service; {0}".format(e))
-    return trigger
-
 def responde(arquivo):
-    call(['afplay', 'audios/' + arquivo + '.mp3'])
-    #playsound('audios/' + arquivo + '.mp3')
+    #all(['afplay', 'audios/' + arquivo + '.mp3'])
+    playsound('audios/' + arquivo + '.mp3')
 
 def cria_audio(mensagem):
     tts = gTTS(mensagem, lang='pt-br')
@@ -76,13 +56,34 @@ def playlists(album):
     if album == 'mais tocadas':
         browser.open('https://www.youtube.com/watch?v=TNIbXs_iNq8&list=PL2Q4-ZPcmbjAWEKoIqjIbGQgxPRsmlkUd')
 
-def main():
-    while True:
-        monitora_audio()
 
-main()
+def callback(recognizer, audio):
+    # received audio data, now we'll recognize it using Google Speech Recognition
+    try:
+        trigger = recognizer.recognize_google(audio, language='pt-br')
+        if hotword in trigger:
+            responde('feedback')
+            executa_comandos(trigger)
+        print("Google Speech Recognition thinks you said " + recognizer.recognize_google(audio, language='pt-br'))
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
-#publica_mqtt('office/iluminacao/status', '1')
+
+r = sr.Recognizer()
+m = sr.Microphone()
+with m as source:
+    r.adjust_for_ambient_noise(source)
+
+stop_listening = r.listen_in_background(m, callback)
+
+for _ in range(50): time.sleep(0.1)
+
+
+while True: time.sleep(0.1)
+
+
 
 
 
