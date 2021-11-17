@@ -1,7 +1,7 @@
 from gtts import gTTS
 import speech_recognition as sr
 from subprocess import call     # MAC / LINUX
-from playsound import playsound
+#from playsound import playsound
 import time
 from requests import get
 from bs4 import BeautifulSoup
@@ -18,8 +18,8 @@ with open('mirror-3663d-7396063fa192.json') as credenciais_google:
 ##### FUNÇÕES PRINCIPAIS #####
 
 def responde(arquivo):
-    #all(['afplay', 'audios/' + arquivo + '.mp3'])
-    playsound('audios/' + arquivo + '.mp3')
+    call(['afplay', 'audios/' + arquivo + '.mp3'])
+    #playsound('audios/' + arquivo + '.mp3')
 
 def cria_audio(mensagem):
     tts = gTTS(mensagem, lang='pt-br')
