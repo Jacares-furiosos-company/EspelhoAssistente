@@ -1,40 +1,55 @@
+import os
+import random
 from gtts import gTTS
 import speech_recognition as sr
 from subprocess import call     # MAC / LINUX
-#from playsound import playsound
+from playsound import playsound
 import time
 from requests import get
 from bs4 import BeautifulSoup
 import webbrowser as browser
+import wikipedia
 from paho.mqtt import  publish
+
+with open('mirror-3663d-2f6e243aac6e.json') as credenciais_google:
+    credenciais_google = credenciais_google.read()
 
 ##### CONFIGURAÇÕES #####
 hotword = 'espelho'
 
-with open('mirror-3663d-7396063fa192.json') as credenciais_google:
-    credenciais_google = credenciais_google.read()
-
 
 ##### FUNÇÕES PRINCIPAIS #####
 
+def existe(terms, trigger):
+    for item in terms:
+        if item in trigger:
+            return True
+
 def responde(arquivo):
-    call(['afplay', 'audios/' + arquivo + '.mp3'])
-    #playsound('audios/' + arquivo + '.mp3')
+    #call(['afplay', 'audios/' + arquivo + '.mp3'])
+    playsound('audios/' + arquivo + '.mp3')
 
-def cria_audio(mensagem):
-    tts = gTTS(mensagem, lang='pt-br')
-    tts.save('audios/mensagem.mp3')
-    print('Espelho: ', mensagem)
-    call(['afplay', 'audios/mensagem.mp3']) # OSX
-    #playsound('audios/mensagem.mp3')
-
+def cria_audio(audio_string):
+    tts = gTTS(text=audio_string, lang='pt-br')
+    r = random.randint(1,20000000)
+    audio_file = 'audio' + str(r) + '.mp3'
+    tts.save(audio_file)
+    playsound(audio_file)
+    print(f"Espelho: {audio_string}")
+    os.remove(audio_file)
 
 def executa_comandos(trigger):
-    if 'notícias' in trigger:
+    if existe(['notícias', 'últimas notícas'], trigger):
         ultimas_noticias()
-    elif 'toca' in trigger:
+
+    elif existe(['toca', 'youtub', 'youtube', 'música'], trigger):
         playlists('mais tocadas')
 
+    elif existe(['pesquisar'], trigger):
+        pesquisar(trigger)
+
+    elif existe(['o que você faz'], trigger):
+        responde('oqpodefazer')
 
     else:
         mensagem = trigger.strip(hotword)
@@ -56,17 +71,32 @@ def playlists(album):
     if album == 'mais tocadas':
         browser.open('https://www.youtube.com/watch?v=TNIbXs_iNq8&list=PL2Q4-ZPcmbjAWEKoIqjIbGQgxPRsmlkUd')
 
+def pesquisar(trigger):
+    try:
+        pessoa = trigger.replace('espelho quem é ', '')
+        wikipedia.set_lang("pt")
+        info = wikipedia.summary(pessoa, 1)
+        print(info)
+        cria_audio(info)
+    except:
+        cria_audio('Não encontrei sua pesquisa')
+        print('Problema na pesquisa')
 
+responde('hello')
+##### MICROFONE #####
 def callback(recognizer, audio):
     # received audio data, now we'll recognize it using Google Speech Recognition
     try:
-        trigger = recognizer.recognize_google(audio, language='pt-br')
+
+        trigger = r.recognize_google_cloud(audio, credentials_json=credenciais_google, language='pt-br')
+        #trigger = recognizer.recognize_google(audio, language='pt-br')
         if hotword in trigger:
             responde('feedback')
             executa_comandos(trigger)
-        print("Google Speech Recognition thinks you said " + recognizer.recognize_google(audio, language='pt-br'))
+        print(r.recognize_google_cloud(audio, credentials_json=credenciais_google, language='pt-br'))
+        #print("Google acha que você falou" + recognizer.recognize_google(audio, language='pt-br'))
     except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
+        print("Google não entendeu o que você disse")
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
@@ -82,8 +112,4 @@ for _ in range(50): time.sleep(0.1)
 
 
 while True: time.sleep(0.1)
-
-
-
-
 
