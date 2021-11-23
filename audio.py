@@ -1,10 +1,10 @@
 from gtts import gTTS
-from subprocess import call
+from playsound import  playsound
 
 def criaAudio(audio):
     tts = gTTS(audio, lang='pt-br')
-    tts.save('audios/naoentendi.mp3')
+    tts.save('audios/maravilhosa.mp3')
 
-    call(['aplay', 'audios/naoentendi.mp3'])
+    playsound('audios/maravilhosa.mp3')
 
-criaAudio('não entendi o que disse, fale novamente')
+criaAudio('impossível ter uma rainha mais maravilhosa que você')

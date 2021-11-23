@@ -13,11 +13,9 @@ import webbrowser as browser
 import wikipedia
 from paho.mqtt import publish
 
-with open('mirror-3663d-2f6e243aac6e.json') as credenciais_google:
-    credenciais_google = credenciais_google.read()
 
 ##### CONFIGURAÇÕES #####
-hotword = 'espelho'
+hotword = 'espelho meu'
 
 
 ##### FUNÇÕES PRINCIPAIS #####
@@ -29,8 +27,7 @@ def existe(terms, trigger):
 
 def responde(arquivo):
     try:
-        call(['afplay', 'audios/' + arquivo + '.mp3'])
-        #playsound('audios/'+ arquivo +'.mp3')
+        playsound('audios/'+ arquivo +'.mp3')
     except:
         responde('erro')
 
@@ -39,8 +36,7 @@ def cria_audio(audio):
     r = random.randint(1, 20000000)
     audio_file = 'audios/' + str(r) + '.mp3'
     tts.save(audio_file)
-    call(['aplay', 'audios/'+ str(r) +'.mp3'])
-    #playsound(audio_file)
+    playsound(audio_file)
     print(f"Espelho: {audio}")
     os.remove(audio_file)
 
@@ -48,14 +44,20 @@ def executa_comandos(trigger):
     if existe(['notícias', 'últimas notícas'], trigger):
         ultimas_noticias()
 
-    elif existe(['toca', 'youtub', 'youtube', 'música'], trigger):
-        playlists('mais tocadas')
-
-    elif existe(['pesquisa', 'quem é'], trigger):
+    elif existe(['pesquisa'], trigger):
         pesquisar(trigger)
 
-    elif existe(['o que você faz'], trigger):
-        responde('oqpodefazer')
+    elif existe(['maravilhosa do que'], trigger):
+        responde('maravilhosa')
+
+    elif existe(['alguém mais princesa'], trigger):
+        responde('unicaprincesa')
+
+    elif 'liga luz' in trigger:
+        publica_mqtt('office/iluminacao/status', '1')
+
+    elif 'desativa luz' in trigger:
+        publica_mqtt('office/iluminacao/status', '0')
 
     else:
         mensagem = trigger.strip(hotword)
@@ -65,6 +67,16 @@ def executa_comandos(trigger):
 
 
 ##### FUNÇÕES COMANDOS #####
+def publica_mqtt(topic, payload):
+    publish.single(topic, payload=payload, qos=1, retain=True,
+                   hostname='broker.mqttdashboard.com', port=12892,
+                   client_id='espelho',
+                   auth={'username': 'xxxxxxxx', 'password': 'xxxxxxxx'})
+    if payload == '1':
+        responde('luzLigada')
+    elif payload == '0':
+        responde('luzDesligada')
+
 
 def ultimas_noticias():
     try:
@@ -75,22 +87,14 @@ def ultimas_noticias():
             cria_audio(mensagem)
     except urllib3.exceptions.NewConnectionError:
         responde('erro_conexao')
-    except :
-        responde('nao_entendi')
 
 
-
-def playlists(album):
-    if album == 'mais tocadas':
-        browser.open('https://www.youtube.com/watch?v=TNIbXs_iNq8&list=PL2Q4-ZPcmbjAWEKoIqjIbGQgxPRsmlkUd')
 
 def pesquisar(trigger):
     try:
         pessoa = ''
         if 'pesquisa' in trigger:
-            pessoa = trigger.replace('espelho pesquisa ', '')
-        elif 'quem é ' in trigger:
-            pessoa = trigger.replace('espelho quem é ', '')
+            pessoa = trigger.replace(' espelho meu pesquisa ', '')
         wikipedia.set_lang("pt")
         info = wikipedia.summary(pessoa, 1)
         print(info)
@@ -99,23 +103,22 @@ def pesquisar(trigger):
         cria_audio('Não encontrei sua pesquisa')
         print('Problema na pesquisa')
 
+
+
 responde('bem_vindo')
+
+
 ##### MICROFONE #####
 def callback(recognizer, audio):
     # received audio data, now we'll recognize it using Google Speech Recognition
     try:
-
-        #trigger = r.recognize_google_cloud(audio, credentials_json=credenciais_google, language='pt-br')
         trigger = recognizer.recognize_google(audio, language='pt-br')
+        trigger = trigger.lower()
         if hotword in trigger:
             responde('feedback')
             executa_comandos(trigger)
-        elif hotword not in trigger:
-            responde('naoentendi')
-        #print(r.recognize_google_cloud(audio, credentials_json=credenciais_google, language='pt-br'))
         print("Google acha que você falou" + recognizer.recognize_google(audio, language='pt-br'))
     except sr.UnknownValueError:
-        responde('naoentendi')
         print("não entendeu o que você disse")
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
@@ -131,5 +134,5 @@ stop_listening = r.listen_in_background(m, callback)
 for _ in range(50): time.sleep(0.1)
 
 
-while True: time.sleep(0.1)
+while True: time.sleep(0)
 
