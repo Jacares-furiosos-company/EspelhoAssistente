@@ -1,6 +1,8 @@
+from datetime import datetime
+from googletrans import Translator
 import os
 import random
-
+import randfacts
 import urllib3.exceptions
 from gtts import gTTS
 import speech_recognition as sr
@@ -59,6 +61,12 @@ def executa_comandos(trigger):
     elif existe(['alguém mais princesa'], trigger):
         responde('unicaprincesa')
 
+    elif existe(['horas'], trigger):
+        horaAtual()
+
+    elif existe(['fato', 'curiosidade', 'alguma coisa'], trigger):
+        fatoAleatorio()
+
     elif 'liga luz' in trigger:
         publica_mqtt('office/iluminacao/status', '1')
 
@@ -83,6 +91,16 @@ def publica_mqtt(topic, payload):
     elif payload == '0':
         responde('luzDesligada')
 
+def horaAtual():
+    horaatual = datetime.now().strftime('%H: %M')
+    cria_audio('A hora atual é ' + horaatual)
+
+def fatoAleatorio():
+    fato = randfacts.get_fact()
+    tradutor = Translator()
+    traducao = tradutor.translate(fato, dest='pt', src='en')
+    print(traducao.text)
+    cria_audio(traducao.text)
 
 def ultimas_noticias():
     try:
