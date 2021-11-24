@@ -142,13 +142,13 @@ def monitora_audio():
             try:
                 trigger = microfone.recognize_google(audio, language='pt-br')
                 trigger = trigger.lower()
-
                 if hotword in trigger:
                     print('COMANDO: ', trigger)
                     responde('feedback')
                     executa_comandos(trigger)
                     break
-
+                elif existe(['ok google', 'alexa'], trigger):
+                    responde('AssistenteErrado')
             except sr.UnknownValueError:
                 print("Google not understand audio")
             except sr.RequestError as e:

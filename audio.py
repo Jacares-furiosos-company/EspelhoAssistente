@@ -3,8 +3,8 @@ from playsound import  playsound
 
 def criaAudio(audio):
     tts = gTTS(audio, lang='pt-br')
-    tts.save('audios/maravilhosa.mp3')
+    tts.save('audios/AssistenteErrado.mp3')
 
-    playsound('audios/maravilhosa.mp3')
+    playsound('audios/AssistenteErrado.mp3')
 
-criaAudio('impossível ter uma rainha mais maravilhosa que você')
+criaAudio('Tá usando o assistente errado, é espelho espelho meu')
