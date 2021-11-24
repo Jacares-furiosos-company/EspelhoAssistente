@@ -147,8 +147,11 @@ def monitora_audio():
                     responde('feedback')
                     executa_comandos(trigger)
                     break
-                elif existe(['ok google', 'alexa'], trigger):
-                    responde('AssistenteErrado')
+                elif 'ok google' in trigger:
+                    responde('okGoogle')
+                elif 'alexa' in trigger:
+                    responde('alexa')
+
             except sr.UnknownValueError:
                 print("Google not understand audio")
             except sr.RequestError as e:
