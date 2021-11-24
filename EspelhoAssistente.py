@@ -32,13 +32,19 @@ def responde(arquivo):
         responde('erro')
 
 def cria_audio(audio):
-    tts = gTTS(audio, lang='pt-br')
-    r = random.randint(1, 20000000)
-    audio_file = 'audios/' + str(r) + '.mp3'
-    tts.save(audio_file)
-    playsound(audio_file)
-    print(f"Espelho: {audio}")
-    os.remove(audio_file)
+    try:
+        if audio != '':
+            tts = gTTS(audio, lang='pt-br')
+            r = random.randint(1, 20000000)
+            audio_file = 'audios/' + str(r) + '.mp3'
+            tts.save(audio_file)
+            playsound(audio_file)
+            print(f"Espelho: {audio}")
+            os.remove(audio_file)
+        else:
+            pass
+    except:
+        pass
 
 def executa_comandos(trigger):
     if existe(['notícias', 'últimas notícas'], trigger):
@@ -134,6 +140,7 @@ def monitora_audio():
 def main():
     while True:
         monitora_audio()
+
 
 main()
 
