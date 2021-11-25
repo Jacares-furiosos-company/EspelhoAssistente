@@ -67,6 +67,9 @@ def executa_comandos(trigger):
     elif existe(['fato', 'curiosidade', 'alguma coisa'], trigger):
         fatoAleatorio()
 
+    elif existe(['belo', 'bela'], trigger):
+        responde('maisBela')
+
     elif 'liga luz' in trigger:
         publica_mqtt('office/iluminacao/status', '1')
 

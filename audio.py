@@ -7,4 +7,4 @@ def criaAudio(audio):
 
     playsound('audios/alexa.mp3')
 
-criaAudio('Não fala alexa, é espelho espelho meu')
+criaAudio('Não fale alexa, é espelho espelho meu')
