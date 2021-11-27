@@ -76,6 +76,15 @@ def executa_comandos(trigger):
     elif 'desativa luz' in trigger:
         publica_mqtt('office/iluminacao/status', '0')
 
+    elif existe(['faculdade', 'melhor faculdade'], trigger):
+        responde('melhorFaculdade')
+
+    elif existe(['curso'], trigger):
+        responde('melhorCurso')
+
+    elif existe(['coordenadora', 'corredora' , 'com senadora'], trigger):
+        responde('coordenadora')
+
     else:
         mensagem = trigger.strip(hotword)
         cria_audio(mensagem)
