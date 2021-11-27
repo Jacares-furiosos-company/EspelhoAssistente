@@ -91,7 +91,7 @@ def executa_comandos(trigger):
     elif existe(['coordenadora', 'corredora' , 'com senadora'], trigger):
         responde('coordenadora')
 
-    elif existe(['chamon'], trigger):
+    elif existe(['chamon', 'shamon'], trigger):
         responde('chamon')
 
     elif 'espelho espelho meu' == trigger or 'espelho meu' == trigger:
