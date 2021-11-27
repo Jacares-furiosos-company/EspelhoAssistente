@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from googletrans import Translator
 import os
 import random
@@ -64,6 +64,9 @@ def executa_comandos(trigger):
     elif existe(['horas'], trigger):
         horaAtual()
 
+    elif existe(['data', 'dia'], trigger):
+        dataAtual()
+
     elif existe(['fato', 'curiosidade', 'alguma coisa'], trigger):
         fatoAleatorio()
 
@@ -82,10 +85,16 @@ def executa_comandos(trigger):
     elif existe(['curso'], trigger):
         responde('melhorCurso')
 
+    elif existe(['jacarés furiosos', 'jacaré'], trigger):
+        responde('jacaresFuriosos')
+
     elif existe(['coordenadora', 'corredora' , 'com senadora'], trigger):
         responde('coordenadora')
 
-    elif existe(['espelho meu'], trigger):
+    elif existe(['chamon'], trigger):
+        responde('chamon')
+
+    elif 'espelho espelho meu' == trigger or 'espelho meu' == trigger:
         responde('espelhomeu')
 
     else:
@@ -105,6 +114,12 @@ def publica_mqtt(topic, payload):
         responde('luzLigada')
     elif payload == '0':
         responde('luzDesligada')
+
+def dataAtual():
+    data_atual = date.today()
+    print(data_atual)
+    data_em_texto = data_atual.strftime("%d/%m/%Y")
+    cria_audio('A data atual é ' + data_em_texto)
 
 def horaAtual():
     horaatual = datetime.now().strftime('%H: %M')
