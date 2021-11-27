@@ -85,6 +85,9 @@ def executa_comandos(trigger):
     elif existe(['coordenadora', 'corredora' , 'com senadora'], trigger):
         responde('coordenadora')
 
+    elif existe(['espelho meu'], trigger):
+        responde('espelhomeu')
+
     else:
         mensagem = trigger.strip(hotword)
         cria_audio(mensagem)
@@ -108,11 +111,15 @@ def horaAtual():
     cria_audio('A hora atual é ' + horaatual)
 
 def fatoAleatorio():
-    fato = randfacts.get_fact()
-    tradutor = Translator()
-    traducao = tradutor.translate(fato, dest='pt', src='en')
-    print(traducao.text)
-    cria_audio(traducao.text)
+    try:
+        fato = randfacts.get_fact()
+        tradutor = Translator()
+        traducao = tradutor.translate(fato, dest='pt', src='en')
+        print(traducao.text)
+        cria_audio(traducao.text)
+    except:
+        responde('erro')
+        pass
 
 def ultimas_noticias():
     try:

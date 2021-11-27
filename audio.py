@@ -3,8 +3,8 @@ from playsound import  playsound
 
 def criaAudio(audio):
     tts = gTTS(audio, lang='pt-br')
-    tts.save('audios/coordenadora.mp3')
+    tts.save('audios/espelhomeu.mp3')
 
-    playsound('audios/coordenadora.mp3')
+    playsound('audios/espelhomeu.mp3')
 
-criaAudio('É a Zirlene, além de maravilhosa, ela da apoio e nós incentiva a fazer o nosso melhor, Por isso ela é a melhor coordenadora')
+criaAudio('tô aqui, pode falar')
